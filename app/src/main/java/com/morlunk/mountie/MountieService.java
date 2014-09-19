@@ -20,6 +20,7 @@ package com.morlunk.mountie;
 
 import android.app.Service;
 import android.content.Intent;
+import android.os.Binder;
 import android.os.Environment;
 import android.os.IBinder;
 
@@ -34,6 +35,7 @@ import com.stericson.RootTools.exceptions.RootDeniedException;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.TimeoutException;
 
 public class MountieService extends Service implements NotificationListener, MountListener, UnmountListener {
@@ -79,8 +81,7 @@ public class MountieService extends Service implements NotificationListener, Mou
 
     @Override
     public IBinder onBind(Intent intent) {
-        // TODO: Return the communication channel to the service.
-        throw new UnsupportedOperationException("Not yet implemented");
+        return new LocalBinder(this);
     }
 
     @Override
@@ -116,5 +117,17 @@ public class MountieService extends Service implements NotificationListener, Mou
     @Override
     public void unmountAll() {
         mAutomounter.unmountAll();
+    }
+
+    public static class LocalBinder extends Binder {
+        private MountieService mService;
+
+        public LocalBinder(MountieService service) {
+            mService = service;
+        }
+
+        public MountieService getService() {
+            return mService;
+        }
     }
 }

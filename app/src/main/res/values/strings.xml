@@ -30,5 +30,7 @@
     <string name="notification_content">Insert a USB flash drive to auto-mount.</string>
     <string name="mount_error">Failed to mount %s</string>
     <string name="unmount_error">Failed to unmount %s</string>
+    <string name="devs_mounted">%d device(s) mounted</string>
+    <string name="no_devs_mounted">No devices mounted</string>
 
 </resources>

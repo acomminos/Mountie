@@ -66,10 +66,10 @@ public class MountieNotification {
         Notification.Builder builder = new Notification.Builder(mService);
         builder.setSmallIcon(R.drawable.ic_stat_mountie);
         builder.setContentTitle(mService.getString(R.string.app_name));
-        builder.setContentText(mService.getString(R.string.notification_content));
         builder.setTicker(mTicker);
 
         if (mMounts != null && mMounts.size() > 0) {
+            builder.setContentText(mService.getString(R.string.devs_mounted, mMounts.size()));
             Notification.InboxStyle style = new Notification.InboxStyle();
             for (Mount mount : mMounts) {
                 style.addLine(mount.getDevice().getName() + ": " + mount.getTarget());
@@ -80,6 +80,8 @@ public class MountieNotification {
                     new Intent(ACTION_UNMOUNT), PendingIntent.FLAG_CANCEL_CURRENT);
             builder.addAction(R.drawable.ic_action_unmount,
                     mService.getString(R.string.unmount_all), buttonIntent);
+        } else {
+            builder.setContentText(mService.getString(R.string.no_devs_mounted));
         }
 
         mService.startForeground(NOTIFICATION_ID, builder.build());
