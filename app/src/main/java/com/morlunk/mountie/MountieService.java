@@ -67,16 +67,7 @@ public class MountieService extends Service implements NotificationListener, Mou
             if (!mountDir.exists() && !mountDir.mkdir()) {
                 // TODO notify user of problem
             }
-
-            try {
-                mAutomounter = new Automounter(mRootShell, mountDir, this, this);
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (RootDeniedException e) {
-                e.printStackTrace();
-            } catch (TimeoutException e) {
-                e.printStackTrace();
-            }
+            mAutomounter = new Automounter(mRootShell, mountDir, this, this);
         }
         mBlockDeviceObserver = new BlockDeviceObserver(mRootShell, mAutomounter);
         mNotification = new MountieNotification(this, this);

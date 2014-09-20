@@ -44,7 +44,7 @@ public class Automounter implements PartitionListener, UnmountListener, MountLis
     private UnmountListener mUnmountListener;
     private Set<Mount> mMounts;
 
-    public Automounter(Shell rootShell, File directory, MountListener mountListener, UnmountListener unmountListener) throws IOException, RootDeniedException, TimeoutException {
+    public Automounter(Shell rootShell, File directory, MountListener mountListener, UnmountListener unmountListener) {
         mRootShell = rootShell;
         mDirectory = directory;
         mMountListener = mountListener;
