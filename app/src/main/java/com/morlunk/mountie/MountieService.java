@@ -83,6 +83,7 @@ public class MountieService extends Service implements NotificationListener, Mou
         }
 
         // TODO: detect existing mounts
+        // Right now, if we wait for root, we'll miss the block device add event from inotify.
 
         mBlockDeviceObserver = new BlockDeviceObserver(mRootShell, mAutomounter);
         mNotification = new MountieNotification(this, this);
