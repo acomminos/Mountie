@@ -59,13 +59,6 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>
-
-        <provider
-            android:name=".MountieDeviceProvider"
-            android:authorities="com.morlunk.mountie.DeviceProvider"
-            android:enabled="true"
-            android:exported="true" >
-        </provider>
     </application>
 
 </manifest>

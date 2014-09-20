@@ -30,6 +30,7 @@ import com.stericson.RootTools.execution.Shell;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -54,10 +55,43 @@ public class BlockDeviceObserver extends FileObserver {
         mListener = listener;
         mHandler = new Handler(Looper.getMainLooper());
         mRootShell = rootShell;
+        detectDevices();
+    }
+
+    /**
+     * Detects devices manually. To be used if we missed block device registrations with inotify.
+     */
+    public void detectDevices() {
+        Command blkidCommand = new BlkidCommand(0, new BlkidCommand.Listener() {
+            @Override
+            public void onBlkidResult(List<Partition> partitions) {
+                for (Partition partition : partitions) {
+                    String volumeName = partition.getVolumeName();
+                    Volume volume = mVolumes.get(volumeName);
+                    if (volume == null) {
+                        volume = new Volume(volumeName);
+                        mVolumes.put(volumeName, volume);
+                        mListener.onVolumeAdded(volume);
+                    }
+                    volume.addPartition(partition.getLogicalId(), partition);
+                    mListener.onPartitionAdded(volume, partition);
+                }
+            }
+
+            @Override
+            public void onBlkidFailure() {
+                // TODO
+            }
+        });
+        try {
+            mRootShell.add(blkidCommand);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
-    public void onEvent(int event, String relativePath) {
+    public void onEvent(int event, final String relativePath) {
         Matcher matcher = DEV_PATTERN.matcher(relativePath);
         if (!matcher.matches()) {
             return;
@@ -75,15 +109,16 @@ public class BlockDeviceObserver extends FileObserver {
                     // Run blkid to determine filesystem, label, and UUID
                     Command blkidCommand = new BlkidCommand(0, relativePath, new BlkidCommand.Listener() {
                         @Override
-                        public void onBlkidResult(Partition partition) {
+                        public void onBlkidResult(List<Partition> partitions) {
+                            Partition partition = partitions.get(0);
                             volume.addPartition(logicalId, partition);
                             mListener.onPartitionAdded(volume, partition);
                         }
 
                         @Override
-                        public void onBlkidFailure(String device) {
+                        public void onBlkidFailure() {
                             Log.e(Constants.TAG, "Failed to call blkid for " +
-                                    "discovered partition " + device);
+                                    "discovered partition " + relativePath);
                         }
                     });
 

@@ -126,4 +126,11 @@ public class Partition extends BlockDevice {
         return mMounts;
     }
 
+    public String getVolumeName() {
+        return getName().replaceAll("(sd[a-z]+)[0-9]+", "$1");
+    }
+
+    public int getLogicalId() {
+        return Integer.parseInt(getName().replaceAll("sd[a-z]+([0-9]+)", "$1"));
+    }
 }
