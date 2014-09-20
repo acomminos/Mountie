@@ -91,6 +91,10 @@ public class MountieNotification {
         mService.stopForeground(true);
     }
 
+    public void unregister() {
+        mService.unregisterReceiver(mButtonReceiver);
+    }
+
     public void setTicker(String ticker) {
         mTicker = ticker;
     }

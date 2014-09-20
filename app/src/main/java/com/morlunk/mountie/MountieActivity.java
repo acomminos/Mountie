@@ -35,7 +35,7 @@ public class MountieActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mountie);
 
-        startService(new Intent(this, MountieService.class));
+//        startService(new Intent(this, MountieService.class));
     }
 
 

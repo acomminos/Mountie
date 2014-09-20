@@ -53,6 +53,13 @@
             </intent-filter>
         </receiver>
 
+        <receiver android:name=".UsbHotplugReceiver" >
+            <intent-filter>
+                <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </receiver>
+
         <provider
             android:name=".MountieDeviceProvider"
             android:authorities="com.morlunk.mountie.DeviceProvider"
