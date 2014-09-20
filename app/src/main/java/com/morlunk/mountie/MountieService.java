@@ -44,23 +44,15 @@ import java.util.List;
 import java.util.concurrent.TimeoutException;
 
 public class MountieService extends Service implements NotificationListener, MountListener, UnmountListener {
-    /**
-     * Makes the lifecycle of this service dependent on USB hotplug broadcasts.
-     */
-    public static final String PREF_USB_LIFECYCLE = "usb_lifecycle";
-    public static final boolean DEFAULT_USB_LIFECYCLE = true;
-
     public static final String MOUNT_DIR = "mountie";
     private BlockDeviceObserver mBlockDeviceObserver;
     private Automounter mAutomounter;
     private MountieNotification mNotification;
     private Shell mRootShell;
-    private SharedPreferences mPreferences;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         try {
             mRootShell = RootTools.getShell(true);
@@ -116,8 +108,9 @@ public class MountieService extends Service implements NotificationListener, Mou
                 partition.getReadableName()));
         mNotification.show();
 
-        if (mPreferences.getBoolean(PREF_USB_LIFECYCLE, DEFAULT_USB_LIFECYCLE) &&
-                mAutomounter.getMounts().size() == 0) {
+        // Automatically stop the service once we run out of mounts.
+        // It will be restarted on a new hotplug event. (with UsbHotplugReceiver)
+        if (mAutomounter.getMounts().size() == 0) {
             stopSelf();
         }
     }
@@ -129,8 +122,9 @@ public class MountieService extends Service implements NotificationListener, Mou
         mNotification.setMounts(mAutomounter.getMounts());
         mNotification.show();
 
-        if (mPreferences.getBoolean(PREF_USB_LIFECYCLE, DEFAULT_USB_LIFECYCLE) &&
-                mAutomounter.getMounts().size() == 0) {
+        // Automatically stop the service once we run out of mounts.
+        // It will be restarted on a new hotplug event. (with UsbHotplugReceiver)
+        if (mAutomounter.getMounts().size() == 0) {
             stopSelf();
         }
     }

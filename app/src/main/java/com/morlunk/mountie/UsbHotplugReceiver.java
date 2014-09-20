@@ -40,11 +40,7 @@ public class UsbHotplugReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         if (UsbManager.ACTION_USB_DEVICE_ATTACHED.equals(intent.getAction())) {
-            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-            if (preferences.getBoolean(MountieService.PREF_USB_LIFECYCLE,
-                    MountieService.DEFAULT_USB_LIFECYCLE)) {
-                context.startService(new Intent(context, MountieService.class));
-            }
+            context.startService(new Intent(context, MountieService.class));
         } else {
             throw new UnsupportedOperationException();
         }

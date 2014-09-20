@@ -20,8 +20,6 @@
 <resources>
 
     <string name="app_name">Mountie</string>
-    <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
     <string name="mounted_at">Mounted \"%1$s\" at %2$s</string>
     <string name="dev_removed">Device \"%s\" removed</string>
     <string name="dev_added">Device \"%s\" added</string>
