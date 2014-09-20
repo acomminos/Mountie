@@ -43,7 +43,10 @@ public class Automounter implements PartitionListener, UnmountListener, MountLis
     private Shell mRootShell;
     // Directory relative to the root of the FUSE storage.
     private File mDirectory;
-    // The actual mountie directory in /data/media/0.
+    /**
+     * The actual mountie directory in /data/media/0.
+     * It's necessary to mount here to avoid the FUSE abstraction.
+     */
     private String mActualDirectory;
     private MountListener mMountListener;
     private UnmountListener mUnmountListener;
@@ -128,8 +131,7 @@ public class Automounter implements PartitionListener, UnmountListener, MountLis
     }
 
     private String getActualDeviceMountDir(Partition partition) throws IOException {
-        getDeviceMountDir(partition);
-        return mActualDirectory + "/" + partition.getUUID();
+        return mActualDirectory + "/" + getDeviceMountDir(partition).getName();
     }
 
     @Override
