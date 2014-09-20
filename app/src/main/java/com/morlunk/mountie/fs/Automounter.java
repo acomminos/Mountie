@@ -46,6 +46,7 @@ public class Automounter implements PartitionListener, UnmountListener, MountLis
     /**
      * The actual mountie directory in /data/media/0.
      * It's necessary to mount here to avoid the FUSE abstraction.
+     * TODO: Mount in /mnt/mountie and make symlink?
      */
     private String mActualDirectory;
     private MountListener mMountListener;
