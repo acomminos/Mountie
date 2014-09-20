@@ -32,5 +32,7 @@
     <string name="unmount_error">Failed to unmount \"%s\"</string>
     <string name="devs_mounted">%d device(s) mounted</string>
     <string name="no_devs_mounted">No devices mounted</string>
+    <string name="failed_mkdir">Failed to make mount directory.</string>
+    <string name="requires_root">Mountie requires root access to work.</string>
 
 </resources>

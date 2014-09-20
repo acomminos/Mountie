@@ -25,6 +25,7 @@ import android.os.Binder;
 import android.os.Environment;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.widget.Toast;
 
 import com.morlunk.mountie.fs.Automounter;
 import com.morlunk.mountie.fs.BlockDeviceObserver;
@@ -64,22 +65,25 @@ public class MountieService extends Service implements NotificationListener, Mou
 
         try {
             mRootShell = RootTools.getShell(true);
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
-        } catch (TimeoutException e) {
-            e.printStackTrace();
-        } catch (RootDeniedException e) {
-            e.printStackTrace();
-            stopSelf(); // TODO: show error
+            Toast.makeText(this, R.string.requires_root, Toast.LENGTH_LONG).show();
+            stopSelf();
+            return;
         }
 
         if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
             File mountDir = new File(Environment.getExternalStorageDirectory(), MOUNT_DIR);
             if (!mountDir.exists() && !mountDir.mkdir()) {
-                // TODO notify user of problem
+                Toast.makeText(this, R.string.failed_mkdir, Toast.LENGTH_LONG).show();
+                stopSelf();
+                return;
             }
             mAutomounter = new Automounter(mRootShell, mountDir, this, this);
         }
+
+        // TODO: detect existing mounts
+
         mBlockDeviceObserver = new BlockDeviceObserver(mRootShell, mAutomounter);
         mNotification = new MountieNotification(this, this);
         mNotification.show();
@@ -89,10 +93,16 @@ public class MountieService extends Service implements NotificationListener, Mou
 
     @Override
     public void onDestroy() {
-        mAutomounter.unmountAll();
-        mBlockDeviceObserver.stopWatching();
-        mNotification.hide();
-        mNotification.unregister();
+        if (mAutomounter != null) {
+            mAutomounter.unmountAll();
+        }
+        if (mBlockDeviceObserver != null) {
+            mBlockDeviceObserver.stopWatching();
+        }
+        if (mNotification != null) {
+            mNotification.hide();
+            mNotification.unregister();
+        }
         super.onDestroy();
     }
 

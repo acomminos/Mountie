@@ -32,7 +32,10 @@ import android.preference.PreferenceManager;
  * Observe that this detection chain depends on the service and inotify setup occurring
  * before the kernel creates the block devices. FIXME.
  *
- * TODO: control this with setting.
+ * Also, note that if the app is force closed its broadcast receivers will be unregistered.
+ * At least, until an activity is reopened.
+ *
+ * TODO: Only launch MountieService if a mass storage device was detected.
  *
  * Created by andrew on 19/09/14.
  */
