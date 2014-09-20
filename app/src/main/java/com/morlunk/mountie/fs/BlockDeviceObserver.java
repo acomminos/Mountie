@@ -24,18 +24,20 @@ import android.os.Looper;
 import android.util.Log;
 
 import com.morlunk.mountie.Constants;
+import com.stericson.RootTools.execution.Command;
+import com.stericson.RootTools.execution.Shell;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Monitors /dev/block for devices using inotify.
- * Keeps a database of block devices and their mounts.
+ * Monitors /dev/block for devices using inotify, and uses the system implementation of blkid to
+ * read device information. We would use inotify events on /proc/partitions, but it's unreliable.
+ * Stores a database of block devices and their mounts.
  * Created by andrew on 14/09/14.
  */
 public class BlockDeviceObserver extends FileObserver {
@@ -44,12 +46,14 @@ public class BlockDeviceObserver extends FileObserver {
     private Map<String, Volume> mVolumes;
     private PartitionListener mListener;
     private Handler mHandler;
+    private Shell mRootShell;
 
-    public BlockDeviceObserver(PartitionListener listener) {
+    public BlockDeviceObserver(Shell rootShell, PartitionListener listener) {
         super("/dev/block/", FileObserver.CREATE | FileObserver.DELETE);
         mVolumes = new HashMap<String, Volume>();
         mListener = listener;
         mHandler = new Handler(Looper.getMainLooper());
+        mRootShell = rootShell;
     }
 
     @Override
@@ -65,12 +69,31 @@ public class BlockDeviceObserver extends FileObserver {
         // FIXME: we assume we receive volumes before logical partition block devices.
         if (event == FileObserver.CREATE) {
             if (logical) {
-                int logicalId = Integer.valueOf(matcher.group(2));
-                Volume volume = mVolumes.get(volumeName);
+                final int logicalId = Integer.valueOf(matcher.group(2));
+                final Volume volume = mVolumes.get(volumeName);
                 if (volume != null) {
-                    Partition partition = new Partition(relativePath);
-                    volume.addPartition(logicalId, partition);
-                    mListener.onPartitionAdded(volume, partition);
+                    // Run blkid to determine filesystem, label, and UUID
+                    Command blkidCommand = new BlkidCommand(0, relativePath, new BlkidCommand.Listener() {
+                        @Override
+                        public void onBlkidResult(Partition partition) {
+                            volume.addPartition(logicalId, partition);
+                            mListener.onPartitionAdded(volume, partition);
+                        }
+
+                        @Override
+                        public void onBlkidFailure(String device) {
+                            Log.e(Constants.TAG, "Failed to call blkid for " +
+                                    "discovered partition " + device);
+                        }
+                    });
+
+                    try {
+                        mRootShell.add(blkidCommand);
+                    } catch (IOException e) {
+                        Log.e(Constants.TAG, "Failed to call blkid for " +
+                                "discovered partition " + relativePath);
+                        e.printStackTrace();
+                    }
                 } else {
                     Log.e(Constants.TAG, "No volume found for partition " + relativePath);
                 }

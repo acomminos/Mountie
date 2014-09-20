@@ -31,7 +31,9 @@ import com.morlunk.mountie.fs.MountListener;
 import com.morlunk.mountie.fs.NotificationListener;
 import com.morlunk.mountie.fs.Partition;
 import com.morlunk.mountie.fs.UnmountListener;
+import com.stericson.RootTools.RootTools;
 import com.stericson.RootTools.exceptions.RootDeniedException;
+import com.stericson.RootTools.execution.Shell;
 
 import java.io.File;
 import java.io.IOException;
@@ -43,10 +45,22 @@ public class MountieService extends Service implements NotificationListener, Mou
     private BlockDeviceObserver mBlockDeviceObserver;
     private Automounter mAutomounter;
     private MountieNotification mNotification;
+    private Shell mRootShell;
 
     @Override
     public void onCreate() {
         super.onCreate();
+
+        try {
+            mRootShell = RootTools.getShell(true);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (TimeoutException e) {
+            e.printStackTrace();
+        } catch (RootDeniedException e) {
+            e.printStackTrace();
+            stopSelf(); // TODO: show error
+        }
 
         if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
             File mountDir = new File(MOUNT_DIR);
@@ -55,7 +69,7 @@ public class MountieService extends Service implements NotificationListener, Mou
             }
 
             try {
-                mAutomounter = new Automounter(mountDir, this, this);
+                mAutomounter = new Automounter(mRootShell, mountDir, this, this);
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (RootDeniedException e) {
@@ -64,7 +78,7 @@ public class MountieService extends Service implements NotificationListener, Mou
                 e.printStackTrace();
             }
         }
-        mBlockDeviceObserver = new BlockDeviceObserver(mAutomounter);
+        mBlockDeviceObserver = new BlockDeviceObserver(mRootShell, mAutomounter);
         mNotification = new MountieNotification(this, this);
         mNotification.show();
 
@@ -87,7 +101,7 @@ public class MountieService extends Service implements NotificationListener, Mou
     @Override
     public void onMountSuccess(Partition partition, Mount mount) {
         mNotification.setTicker(getString(R.string.mounted_at,
-                mount.getDevice().getName(), mount.getTarget()));
+                mount.getDevice().getReadableName(), mount.getTarget()));
         mNotification.setMounts(mAutomounter.getMounts());
         mNotification.show();
     }
@@ -95,14 +109,14 @@ public class MountieService extends Service implements NotificationListener, Mou
     @Override
     public void onMountError(Partition partition, Exception e) {
         mNotification.setTicker(getString(R.string.mount_error,
-                partition.getName()));
+                partition.getReadableName()));
         mNotification.show();
     }
 
     @Override
     public void onUnmountSuccess(Mount mount) {
         mNotification.setTicker(getString(R.string.unmounted,
-                mount.getDevice().getName()));
+                mount.getDevice().getReadableName()));
         mNotification.setMounts(mAutomounter.getMounts());
         mNotification.show();
     }
@@ -110,7 +124,7 @@ public class MountieService extends Service implements NotificationListener, Mou
     @Override
     public void onUnmountError(Mount mount, Exception e) {
         mNotification.setTicker(getString(R.string.unmount_error,
-                mount.getDevice().getName()));
+                mount.getDevice().getReadableName()));
         mNotification.show();
     }
 

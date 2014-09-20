@@ -1,6 +1,0 @@
-[submodule "app/src/main/jni/cryptsetup"]
-	path = app/src/main/jni/cryptsetup
-	url = https://code.google.com/p/cryptsetup/
-[submodule "app/src/main/jni/lvm2"]
-	path = app/src/main/jni/lvm2
-	url = https://git.fedorahosted.org/git/lvm2.git

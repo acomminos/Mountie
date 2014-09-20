@@ -38,12 +38,14 @@ import java.util.concurrent.TimeoutException;
  * Created by andrew on 17/09/14.
  */
 public class Automounter implements PartitionListener, UnmountListener, MountListener {
+    private Shell mRootShell;
     private File mDirectory;
     private MountListener mMountListener;
     private UnmountListener mUnmountListener;
     private Set<Mount> mMounts;
 
-    public Automounter(File directory, MountListener mountListener, UnmountListener unmountListener) throws IOException, RootDeniedException, TimeoutException {
+    public Automounter(Shell rootShell, File directory, MountListener mountListener, UnmountListener unmountListener) throws IOException, RootDeniedException, TimeoutException {
+        mRootShell = rootShell;
         mDirectory = directory;
         mMountListener = mountListener;
         mUnmountListener = unmountListener;
@@ -51,8 +53,7 @@ public class Automounter implements PartitionListener, UnmountListener, MountLis
         cleanDirectory(); // Treat directory like a tmpfs and delete+unmount contents.
     }
 
-    public void cleanDirectory() throws TimeoutException, RootDeniedException, IOException {
-        Shell shell = RootTools.getShell(true);
+    public void cleanDirectory() {
         for (final File file : mDirectory.listFiles()) {
             Command mountCommand = new CommandCapture(0, "umount " + file.getAbsolutePath()) {
                 @Override
@@ -61,7 +62,11 @@ public class Automounter implements PartitionListener, UnmountListener, MountLis
                     file.delete();
                 }
             };
-            shell.add(mountCommand);
+            try {
+                mRootShell.add(mountCommand);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -76,11 +81,7 @@ public class Automounter implements PartitionListener, UnmountListener, MountLis
     @Override
     public void onPartitionAdded(Volume volume, Partition partition) {
         try {
-            partition.mount(getDeviceMountDir(partition).getAbsolutePath(), this);
-        } catch (TimeoutException e) {
-            e.printStackTrace();
-        } catch (RootDeniedException e) {
-            e.printStackTrace();
+            partition.mount(mRootShell, getDeviceMountDir(partition).getAbsolutePath(), this);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -90,11 +91,7 @@ public class Automounter implements PartitionListener, UnmountListener, MountLis
     public void onPartitionRemoved(Volume volume, final Partition partition) {
         if (partition.isMounted()) {
             try {
-                partition.unmountAll(this);
-            } catch (TimeoutException e) {
-                e.printStackTrace();
-            } catch (RootDeniedException e) {
-                e.printStackTrace();
+                partition.unmountAll(mRootShell, this);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -104,11 +101,7 @@ public class Automounter implements PartitionListener, UnmountListener, MountLis
     public void unmountAll() {
         for (Mount mount : mMounts) {
             try {
-                mount.unmount(this);
-            } catch (TimeoutException e) {
-                e.printStackTrace();
-            } catch (RootDeniedException e) {
-                e.printStackTrace();
+                mount.unmount(mRootShell, this);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -121,8 +114,7 @@ public class Automounter implements PartitionListener, UnmountListener, MountLis
     }
 
     private File getDeviceMountDir(Partition partition) throws IOException {
-        File mountDir = new File(mDirectory, partition.getName());
-        // TODO: use disk uuid
+        File mountDir = new File(mDirectory, partition.getUUID());
         if (!mountDir.exists() && !mountDir.mkdirs()) {
             throw new IOException("Couldn't create mount dir!");
         }

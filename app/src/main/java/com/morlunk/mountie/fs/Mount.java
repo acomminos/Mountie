@@ -51,8 +51,7 @@ public class Mount {
         return mTarget;
     }
 
-    public void unmount(final UnmountListener listener) throws TimeoutException, RootDeniedException, IOException {
-        Shell shell = RootTools.getShell(true);
+    public void unmount(Shell shell, final UnmountListener listener) throws IOException {
         Command mountCommand = new CommandCapture(0, "umount " + getTarget()) {
             @Override
             public void commandCompleted(int id, int exitcode) {

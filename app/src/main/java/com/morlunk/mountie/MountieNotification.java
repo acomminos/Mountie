@@ -72,7 +72,7 @@ public class MountieNotification {
             builder.setContentText(mService.getString(R.string.devs_mounted, mMounts.size()));
             Notification.InboxStyle style = new Notification.InboxStyle();
             for (Mount mount : mMounts) {
-                style.addLine(mount.getDevice().getName() + ": " + mount.getTarget());
+                style.addLine(mount.getDevice().getReadableName() + ": " + mount.getTarget());
             }
             builder.setStyle(style);
 
