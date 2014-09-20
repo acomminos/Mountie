@@ -61,7 +61,7 @@ public class Partition extends BlockDevice {
      */
     public void mount(Shell shell, final String target, final MountListener listener) throws IOException {
         Log.i(Constants.TAG, "Attempting to mount " + getPath() + " as " + mFilesystem);
-        Command mountCommand = new CommandCapture(0, "mount -o fmask=0000,dmask=0000 -t " + mFilesystem + " " + getPath() + " " + target) {
+        Command mountCommand = new CommandCapture(0, "mount -o rw,nosuid,nodev,fmask=0000,dmask=0000,utf8 -t " + mFilesystem + " " + getPath() + " " + target) {
             @Override
             public void commandCompleted(int id, int exitcode) {
                 super.commandCompleted(id, exitcode);
@@ -70,7 +70,7 @@ public class Partition extends BlockDevice {
                     mMounts.add(mount);
                     listener.onMountSuccess(Partition.this, mount);
                 } else {
-                    listener.onMountError(Partition.this, null);
+                    listener.onMountError(Partition.this, new MountException(toString()));
                 }
             }
         };

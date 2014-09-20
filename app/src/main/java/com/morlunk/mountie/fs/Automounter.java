@@ -18,6 +18,8 @@
 
 package com.morlunk.mountie.fs;
 
+import android.os.Environment;
+
 import com.stericson.RootTools.RootTools;
 import com.stericson.RootTools.exceptions.RootDeniedException;
 import com.stericson.RootTools.execution.Command;
@@ -39,7 +41,10 @@ import java.util.concurrent.TimeoutException;
  */
 public class Automounter implements PartitionListener, UnmountListener, MountListener {
     private Shell mRootShell;
+    // Directory relative to the root of the FUSE storage.
     private File mDirectory;
+    // The actual mountie directory in /data/media/0.
+    private String mActualDirectory;
     private MountListener mMountListener;
     private UnmountListener mUnmountListener;
     private Set<Mount> mMounts;
@@ -47,6 +52,7 @@ public class Automounter implements PartitionListener, UnmountListener, MountLis
     public Automounter(Shell rootShell, File directory, MountListener mountListener, UnmountListener unmountListener) {
         mRootShell = rootShell;
         mDirectory = directory;
+        mActualDirectory = "/data/media/0/" + directory.getName();
         mMountListener = mountListener;
         mUnmountListener = unmountListener;
         mMounts = new HashSet<Mount>();
@@ -55,7 +61,7 @@ public class Automounter implements PartitionListener, UnmountListener, MountLis
 
     public void cleanDirectory() {
         for (final File file : mDirectory.listFiles()) {
-            Command mountCommand = new CommandCapture(0, "umount " + file.getAbsolutePath()) {
+            Command mountCommand = new CommandCapture(0, "umount " + mActualDirectory + "/" + file.getName()) {
                 @Override
                 public void commandCompleted(int id, int exitcode) {
                     super.commandCompleted(id, exitcode);
@@ -81,7 +87,7 @@ public class Automounter implements PartitionListener, UnmountListener, MountLis
     @Override
     public void onPartitionAdded(Volume volume, Partition partition) {
         try {
-            partition.mount(mRootShell, getDeviceMountDir(partition).getAbsolutePath(), this);
+            partition.mount(mRootShell, getActualDeviceMountDir(partition), this);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -121,6 +127,11 @@ public class Automounter implements PartitionListener, UnmountListener, MountLis
         return mountDir;
     }
 
+    private String getActualDeviceMountDir(Partition partition) throws IOException {
+        getDeviceMountDir(partition);
+        return mActualDirectory + "/" + partition.getUUID();
+    }
+
     @Override
     public void onUnmountSuccess(Mount mount) {
         mMounts.remove(mount);
@@ -144,7 +155,7 @@ public class Automounter implements PartitionListener, UnmountListener, MountLis
     }
 
     @Override
-    public void onMountError(Partition partition, Exception e) {
+    public void onMountError(Partition partition, MountException e) {
         mMountListener.onMountError(partition, e);
     }
 }

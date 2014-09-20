@@ -19,9 +19,10 @@
 package com.morlunk.mountie.fs;
 
 /**
- * Created by andrew on 17/09/14.
+ * Created by andrew on 19/09/14.
  */
-public interface MountListener {
-    public void onMountSuccess(Partition partition, Mount mount);
-    public void onMountError(Partition partition, MountException e);
+public class MountException extends Exception {
+    public MountException(String s) {
+        super(s);
+    }
 }

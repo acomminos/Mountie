@@ -27,6 +27,7 @@ import android.os.IBinder;
 import com.morlunk.mountie.fs.Automounter;
 import com.morlunk.mountie.fs.BlockDeviceObserver;
 import com.morlunk.mountie.fs.Mount;
+import com.morlunk.mountie.fs.MountException;
 import com.morlunk.mountie.fs.MountListener;
 import com.morlunk.mountie.fs.NotificationListener;
 import com.morlunk.mountie.fs.Partition;
@@ -41,7 +42,7 @@ import java.util.List;
 import java.util.concurrent.TimeoutException;
 
 public class MountieService extends Service implements NotificationListener, MountListener, UnmountListener {
-    public static final String MOUNT_DIR = "/sdcard/mountie";
+    public static final String MOUNT_DIR = "mountie";
     private BlockDeviceObserver mBlockDeviceObserver;
     private Automounter mAutomounter;
     private MountieNotification mNotification;
@@ -63,7 +64,7 @@ public class MountieService extends Service implements NotificationListener, Mou
         }
 
         if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
-            File mountDir = new File(MOUNT_DIR);
+            File mountDir = new File(Environment.getExternalStorageDirectory(), MOUNT_DIR);
             if (!mountDir.exists() && !mountDir.mkdir()) {
                 // TODO notify user of problem
             }
@@ -98,7 +99,8 @@ public class MountieService extends Service implements NotificationListener, Mou
     }
 
     @Override
-    public void onMountError(Partition partition, Exception e) {
+    public void onMountError(Partition partition, MountException e) {
+        e.printStackTrace();
         mNotification.setTicker(getString(R.string.mount_error,
                 partition.getReadableName()));
         mNotification.show();
