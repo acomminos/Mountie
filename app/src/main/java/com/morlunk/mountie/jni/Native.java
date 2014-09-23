@@ -18,8 +18,6 @@
 
 package com.morlunk.mountie.jni;
 
-import java.nio.ByteBuffer;
-
 /**
  * Created by andrew on 01/09/14.
  */

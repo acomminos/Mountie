@@ -18,8 +18,6 @@
 
 package com.morlunk.mountie.fs;
 
-import java.io.IOException;
-
 /**
  * Created by andrew on 19/09/14.
  */

@@ -21,9 +21,6 @@ package com.morlunk.mountie.fs;
 import android.util.Log;
 
 import com.morlunk.mountie.Constants;
-import com.morlunk.mountie.util.Filesystems;
-import com.stericson.RootTools.RootTools;
-import com.stericson.RootTools.exceptions.RootDeniedException;
 import com.stericson.RootTools.execution.Command;
 import com.stericson.RootTools.execution.CommandCapture;
 import com.stericson.RootTools.execution.Shell;
@@ -31,11 +28,7 @@ import com.stericson.RootTools.execution.Shell;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-import java.util.concurrent.TimeoutException;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by andrew on 14/09/14.

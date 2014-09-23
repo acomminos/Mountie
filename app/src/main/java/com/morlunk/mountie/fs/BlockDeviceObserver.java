@@ -24,6 +24,7 @@ import android.os.Looper;
 import android.util.Log;
 
 import com.morlunk.mountie.Constants;
+import com.morlunk.mountie.command.BlkidCommand;
 import com.stericson.RootTools.execution.Command;
 import com.stericson.RootTools.execution.Shell;
 

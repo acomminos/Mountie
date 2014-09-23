@@ -18,14 +18,11 @@
 
 package com.morlunk.mountie.fs;
 
-import com.stericson.RootTools.RootTools;
-import com.stericson.RootTools.exceptions.RootDeniedException;
 import com.stericson.RootTools.execution.Command;
 import com.stericson.RootTools.execution.CommandCapture;
 import com.stericson.RootTools.execution.Shell;
 
 import java.io.IOException;
-import java.util.concurrent.TimeoutException;
 
 /**
  * Created by andrew on 17/09/14.
@@ -47,8 +44,16 @@ public class Mount {
         return mDevice;
     }
 
+    public String getFilesystem() {
+        return mFilesystem;
+    }
+
     public String getTarget() {
         return mTarget;
+    }
+
+    public String getOptions() {
+        return mOptions;
     }
 
     public void unmount(Shell shell, final UnmountListener listener) throws IOException {

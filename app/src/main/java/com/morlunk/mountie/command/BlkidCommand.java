@@ -16,8 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.morlunk.mountie.fs;
+package com.morlunk.mountie.command;
 
+import com.morlunk.mountie.fs.Partition;
 import com.stericson.RootTools.execution.Command;
 
 import java.util.LinkedList;

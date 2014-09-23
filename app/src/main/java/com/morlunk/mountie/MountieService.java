@@ -24,11 +24,9 @@ import android.content.SharedPreferences;
 import android.os.Binder;
 import android.os.Environment;
 import android.os.IBinder;
-import android.os.UserManager;
 import android.preference.PreferenceManager;
 import android.widget.Toast;
 
-import com.morlunk.mountie.fs.Automounter;
 import com.morlunk.mountie.fs.BlockDeviceObserver;
 import com.morlunk.mountie.fs.Mount;
 import com.morlunk.mountie.fs.MountException;
@@ -39,11 +37,17 @@ import com.stericson.RootTools.RootTools;
 import com.stericson.RootTools.execution.Shell;
 
 import java.io.File;
-import java.io.IOException;
 
+/**
+ * Manages the automounting of existing block devices and observation of future device additions.
+ * Enters the foreground when one or more devices are mounted; otherwise, its lifecycle is
+ * dependent on invocations from {@link com.morlunk.mountie.UsbHotplugReceiver}. When not in the
+ * foreground, the service can stop at any time. However, UsbHotplugReceiver ensures that an
+ * instance is created whenever we detect a new USB device.
+ */
 public class MountieService extends Service implements MountieNotification.Listener, MountListener, UnmountListener {
     /**
-     * Makes the lifecycle of this service dependent on USB hotplug broadcasts.
+     * Makes the foreground status of this service dependent on USB hotplug broadcasts.
      */
     public static final String PREF_USB_LIFECYCLE = "usb_lifecycle";
     public static final boolean DEFAULT_USB_LIFECYCLE = true;
@@ -81,10 +85,8 @@ public class MountieService extends Service implements MountieNotification.Liste
         }
 
         mBlockDeviceObserver = new BlockDeviceObserver(mRootShell, mAutomounter);
-        mNotification = new MountieNotification(this, this);
-        mNotification.show();
-
         mBlockDeviceObserver.startWatching();
+        mNotification = new MountieNotification(this, this);
     }
 
     @Override
@@ -109,8 +111,8 @@ public class MountieService extends Service implements MountieNotification.Liste
 
     @Override
     public void onMountSuccess(Partition partition, Mount mount) {
-        mNotification.setTicker(getString(R.string.mounted_at,
-                mount.getDevice().getReadableName(), mount.getTarget()));
+        mNotification.setTicker(getString(R.string.mounted,
+                mount.getDevice().getReadableName()));
         mNotification.setMounts(mAutomounter.getMounts());
         mNotification.show();
     }
@@ -124,7 +126,7 @@ public class MountieService extends Service implements MountieNotification.Liste
 
         if (mPreferences.getBoolean(PREF_USB_LIFECYCLE, DEFAULT_USB_LIFECYCLE) &&
                 mAutomounter.getMounts().size() == 0) {
-            stopSelf();
+            mNotification.hide();
         }
     }
 
@@ -137,7 +139,7 @@ public class MountieService extends Service implements MountieNotification.Liste
 
         if (mPreferences.getBoolean(PREF_USB_LIFECYCLE, DEFAULT_USB_LIFECYCLE) &&
                 mAutomounter.getMounts().size() == 0) {
-            stopSelf();
+            mNotification.hide();
         }
     }
 
@@ -146,6 +148,11 @@ public class MountieService extends Service implements MountieNotification.Liste
         mNotification.setTicker(getString(R.string.unmount_error,
                 mount.getDevice().getReadableName()));
         mNotification.show();
+
+        if (mPreferences.getBoolean(PREF_USB_LIFECYCLE, DEFAULT_USB_LIFECYCLE) &&
+                mAutomounter.getMounts().size() == 0) {
+            mNotification.hide();
+        }
     }
 
     @Override

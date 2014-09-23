@@ -16,10 +16,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.morlunk.mountie.fs;
+package com.morlunk.mountie;
 
 import android.os.Environment;
 
+import com.morlunk.mountie.fs.Mount;
+import com.morlunk.mountie.fs.MountException;
+import com.morlunk.mountie.fs.MountListener;
+import com.morlunk.mountie.fs.Partition;
+import com.morlunk.mountie.fs.PartitionListener;
+import com.morlunk.mountie.fs.UnmountListener;
+import com.morlunk.mountie.fs.Volume;
 import com.stericson.RootTools.execution.Command;
 import com.stericson.RootTools.execution.CommandCapture;
 import com.stericson.RootTools.execution.Shell;
@@ -42,6 +49,10 @@ public class Automounter implements PartitionListener, UnmountListener, MountLis
     private static final String DATA_DIR = "/data/media/0/";
 
     private Shell mRootShell;
+    /**
+     * Observe that mEmulatedDirectory and mMountDirectory point to the same physical storage.
+     * One is abstracted to the user as a FUSE share while the other is a mounted vfat partition.
+     */
     private File mEmulatedDirectory;
     private File mMountDirectory;
     private MountListener mMountListener;
@@ -50,11 +61,11 @@ public class Automounter implements PartitionListener, UnmountListener, MountLis
 
     /**
      * Creates a new automounter.
-     * Must be registered to mount
-     * @param rootShell
+     * Must be registered to a {@link com.morlunk.mountie.fs.BlockDeviceObserver} in order to automount.
+     * @param rootShell A root shell to execute mount commands in.
      * @param dirName The name of the directory to mount in on external storage.
-     * @param mountListener
-     * @param unmountListener
+     * @param mountListener A listener for newly automounted devices.
+     * @param unmountListener A listener for unmounted automounted devices.
      */
     public Automounter(Shell rootShell, String dirName, MountListener mountListener, UnmountListener unmountListener) {
         mRootShell = rootShell;
@@ -94,7 +105,7 @@ public class Automounter implements PartitionListener, UnmountListener, MountLis
     @Override
     public void onPartitionAdded(Volume volume, Partition partition) {
         try {
-            partition.mount(mRootShell, getActualDeviceMountDir(partition), this);
+            partition.mount(mRootShell, getDeviceMountDir(partition), this);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -126,7 +137,7 @@ public class Automounter implements PartitionListener, UnmountListener, MountLis
         return mMounts;
     }
 
-    private File getDeviceMountDir(Partition partition) throws IOException {
+    private File getEmulatedMountDir(Partition partition) throws IOException {
         File mountDir = new File(mEmulatedDirectory, partition.getUUID());
         if (!mountDir.exists() && !mountDir.mkdirs()) {
             throw new IOException("Couldn't create mount dir!");
@@ -134,15 +145,15 @@ public class Automounter implements PartitionListener, UnmountListener, MountLis
         return mountDir;
     }
 
-    private String getActualDeviceMountDir(Partition partition) throws IOException {
-        return mMountDirectory + "/" + getDeviceMountDir(partition).getName();
+    private String getDeviceMountDir(Partition partition) throws IOException {
+        return mMountDirectory + "/" + getEmulatedMountDir(partition).getName();
     }
 
     @Override
     public void onUnmountSuccess(Mount mount) {
         mMounts.remove(mount);
         try {
-            getDeviceMountDir(mount.getDevice()).delete();
+            getEmulatedMountDir(mount.getDevice()).delete();
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -1,6 +1,7 @@
 package com.stericson.RootTools.execution;
 
 import android.content.Context;
+
 import com.stericson.RootTools.RootTools;
 
 public class JavaCommandCapture extends Command {

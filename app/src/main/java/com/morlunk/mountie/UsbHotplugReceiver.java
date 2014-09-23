@@ -40,6 +40,8 @@ import android.preference.PreferenceManager;
  * Created by andrew on 19/09/14.
  */
 public class UsbHotplugReceiver extends BroadcastReceiver {
+
+
     @Override
     public void onReceive(Context context, Intent intent) {
         if (UsbManager.ACTION_USB_DEVICE_ATTACHED.equals(intent.getAction())) {

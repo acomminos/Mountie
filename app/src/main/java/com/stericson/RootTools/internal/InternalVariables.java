@@ -22,14 +22,14 @@
 
 package com.stericson.RootTools.internal;
 
+import com.stericson.RootTools.containers.Mount;
+import com.stericson.RootTools.containers.Permissions;
+import com.stericson.RootTools.containers.Symlink;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
-
-import com.stericson.RootTools.containers.Mount;
-import com.stericson.RootTools.containers.Permissions;
-import com.stericson.RootTools.containers.Symlink;
 
 public class InternalVariables {
 

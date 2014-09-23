@@ -22,12 +22,6 @@
 
 package com.stericson.RootTools;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.TimeoutException;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -42,6 +36,12 @@ import com.stericson.RootTools.execution.Shell;
 import com.stericson.RootTools.internal.Remounter;
 import com.stericson.RootTools.internal.RootToolsInternalMethods;
 import com.stericson.RootTools.internal.Runner;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.TimeoutException;
 
 public final class RootTools {
 

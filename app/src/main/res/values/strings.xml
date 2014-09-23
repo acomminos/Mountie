@@ -22,7 +22,7 @@
     <string name="app_name">Mountie</string>
     <string name="mountie_instructions">Mountie is a simple tool for mounting USB flash drives on your Android device.\n\nIn order to use the app, your device must be rooted and support USB on-the-go.\n\nTo mount your drive, simply insert it at any time. A notification will appear and your drive will be mounted with the shown UUID in the \'mountie\' directory on your primary external storage.</string>
     <string name="action_settings">Settings</string>
-    <string name="mounted_at">Mounted \"%1$s\" at %2$s</string>
+    <string name="mounted">Mounted \"%s\"</string>
     <string name="dev_removed">Device \"%s\" removed</string>
     <string name="dev_added">Device \"%s\" added</string>
     <string name="unmount_all">Unmount All</string>
@@ -35,5 +35,8 @@
     <string name="failed_mkdir">Failed to make mount directory.</string>
     <string name="requires_root">Mountie requires root access to work.</string>
     <string name="failed_shell">Failed to execute command in root shell.</string>
+    <string name="notify_label">Label: %s</string>
+    <string name="notify_uuid">UUID: %s</string>
+    <string name="notify_dev">Device: %s</string>
 
 </resources>

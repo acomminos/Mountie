@@ -27,6 +27,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 
 import com.morlunk.mountie.fs.Mount;
+import com.morlunk.mountie.fs.Partition;
 
 import java.util.Collection;
 
@@ -69,7 +70,12 @@ public class MountieNotification {
             builder.setContentText(mService.getString(R.string.devs_mounted, mMounts.size()));
             Notification.InboxStyle style = new Notification.InboxStyle();
             for (Mount mount : mMounts) {
-                style.addLine(mount.getDevice().getReadableName() + ": " + mount.getTarget());
+                Partition partition = mount.getDevice();
+                if (partition.getLabel() != null) {
+                    style.addLine(mService.getString(R.string.notify_label, partition.getLabel()));
+                }
+                style.addLine(mService.getString(R.string.notify_uuid, partition.getUUID()));
+                style.addLine(mService.getString(R.string.notify_dev, partition.getVolumeName()));
             }
             builder.setStyle(style);
 

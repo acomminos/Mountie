@@ -19,25 +19,47 @@
 package com.morlunk.mountie;
 
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.util.Log;
+import android.os.IBinder;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.morlunk.mountie.util.Filesystems;
-
 
 public class MountieActivity extends Activity {
+    private ServiceConnection mConn = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mountie);
-
-//        startService(new Intent(this, MountieService.class));
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Intent mountieIntent = new Intent(this, MountieService.class);
+        startService(mountieIntent);
+        bindService(mountieIntent, mConn, 0);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unbindService(mConn);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
