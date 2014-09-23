@@ -45,13 +45,12 @@
             android:exported="true" >
         </service>
 
-        <!--<receiver android:name=".MountieBootReceiver" >-->
-            <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.BOOT_COMPLETED" />-->
-
-                <!--<category android:name="android.intent.category.DEFAULT" />-->
-            <!--</intent-filter>-->
-        <!--</receiver>-->
+        <receiver android:name=".MountieBootReceiver" >
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </receiver>
 
         <receiver android:name=".UsbHotplugReceiver" >
             <intent-filter>
