@@ -60,7 +60,7 @@ public class Partition extends BlockDevice {
      * @param target The target of the mount.
      */
     public void mount(Shell shell, final String target, final MountListener listener) throws IOException {
-        Log.i(Constants.TAG, "Attempting to mount " + getPath() + " as " + mFilesystem);
+        Log.i(Constants.TAG, "Attempting to mount " + getPath() + " at " + target + " as " + mFilesystem);
         Command mountCommand = new CommandCapture(0, "mount -o rw,nosuid,nodev,fmask=0000,dmask=0000,utf8 -t " + mFilesystem + " " + getPath() + " " + target) {
             @Override
             public void commandCompleted(int id, int exitcode) {

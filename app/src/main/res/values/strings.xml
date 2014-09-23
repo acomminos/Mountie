@@ -34,5 +34,6 @@
     <string name="no_devs_mounted">No devices mounted</string>
     <string name="failed_mkdir">Failed to make mount directory.</string>
     <string name="requires_root">Mountie requires root access to work.</string>
+    <string name="failed_shell">Failed to execute command in root shell.</string>
 
 </resources>

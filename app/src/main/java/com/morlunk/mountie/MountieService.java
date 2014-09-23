@@ -32,19 +32,15 @@ import com.morlunk.mountie.fs.BlockDeviceObserver;
 import com.morlunk.mountie.fs.Mount;
 import com.morlunk.mountie.fs.MountException;
 import com.morlunk.mountie.fs.MountListener;
-import com.morlunk.mountie.fs.NotificationListener;
 import com.morlunk.mountie.fs.Partition;
 import com.morlunk.mountie.fs.UnmountListener;
 import com.stericson.RootTools.RootTools;
-import com.stericson.RootTools.exceptions.RootDeniedException;
 import com.stericson.RootTools.execution.Shell;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
-import java.util.concurrent.TimeoutException;
 
-public class MountieService extends Service implements NotificationListener, MountListener, UnmountListener {
+public class MountieService extends Service implements MountieNotification.Listener, MountListener, UnmountListener {
     /**
      * Makes the lifecycle of this service dependent on USB hotplug broadcasts.
      */
@@ -79,6 +75,7 @@ public class MountieService extends Service implements NotificationListener, Mou
                 stopSelf();
                 return;
             }
+
             mAutomounter = new Automounter(mRootShell, mountDir, this, this);
         }
 

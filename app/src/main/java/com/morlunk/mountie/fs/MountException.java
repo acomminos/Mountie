@@ -18,11 +18,17 @@
 
 package com.morlunk.mountie.fs;
 
+import java.io.IOException;
+
 /**
  * Created by andrew on 19/09/14.
  */
 public class MountException extends Exception {
     public MountException(String s) {
         super(s);
+    }
+
+    public MountException(Throwable throwable) {
+        super(throwable);
     }
 }

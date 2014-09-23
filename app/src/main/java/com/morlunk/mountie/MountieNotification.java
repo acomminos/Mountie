@@ -27,11 +27,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 
 import com.morlunk.mountie.fs.Mount;
-import com.morlunk.mountie.fs.NotificationListener;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Created by andrew on 17/09/14.
@@ -41,7 +38,7 @@ public class MountieNotification {
     private static final String ACTION_UNMOUNT = "unmount";
 
     private Service mService;
-    private NotificationListener mListener;
+    private Listener mListener;
     private String mTicker;
     private Collection<Mount> mMounts;
 
@@ -56,7 +53,7 @@ public class MountieNotification {
         }
     };
 
-    public MountieNotification(Service service, NotificationListener listener) {
+    public MountieNotification(Service service, Listener listener) {
         mService = service;
         mListener = listener;
         mService.registerReceiver(mButtonReceiver, new IntentFilter(ACTION_UNMOUNT));
@@ -101,5 +98,12 @@ public class MountieNotification {
 
     public void setMounts(Collection<Mount> mounts) {
         mMounts = mounts;
+    }
+
+    /**
+     * Created by andrew on 17/09/14.
+     */
+    public static interface Listener {
+        public void unmountAll();
     }
 }

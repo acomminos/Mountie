@@ -49,6 +49,13 @@ public class BlockDeviceObserver extends FileObserver {
     private Handler mHandler;
     private Shell mRootShell;
 
+    /**
+     * Creates a new block device observer.
+     * Does not start observing until {@link #startWatching()} is called.
+     * @param rootShell The shell to execute mount commands in.
+     * @param listener A listener to receive block device events.
+     *                 Calls are received on the main thread.
+     */
     public BlockDeviceObserver(Shell rootShell, PartitionListener listener) {
         super("/dev/block/", FileObserver.CREATE | FileObserver.DELETE);
         mVolumes = new HashMap<String, Volume>();
@@ -59,7 +66,8 @@ public class BlockDeviceObserver extends FileObserver {
     }
 
     /**
-     * Detects devices manually. To be used if we missed block device registrations with inotify.
+     * Detects devices manually.
+     * To be used if we missed block device registrations with inotify.
      */
     public void detectDevices() {
         Command blkidCommand = new BlkidCommand(0, new BlkidCommand.Listener() {
@@ -80,7 +88,7 @@ public class BlockDeviceObserver extends FileObserver {
 
             @Override
             public void onBlkidFailure() {
-                // TODO
+                Log.e(Constants.TAG, "Failed to call blkid!");
             }
         });
         try {
@@ -100,7 +108,7 @@ public class BlockDeviceObserver extends FileObserver {
         String volumeName = matcher.group(1);
         boolean logical = matcher.group(2) != null;
 
-        // FIXME: we assume we receive volumes before logical partition block devices.
+        // FIXME? We assume we receive volumes before logical partition block devices.
         if (event == FileObserver.CREATE) {
             if (logical) {
                 final int logicalId = Integer.valueOf(matcher.group(2));
@@ -110,9 +118,18 @@ public class BlockDeviceObserver extends FileObserver {
                     Command blkidCommand = new BlkidCommand(0, relativePath, new BlkidCommand.Listener() {
                         @Override
                         public void onBlkidResult(List<Partition> partitions) {
-                            Partition partition = partitions.get(0);
+                            if (partitions.size() == 0) {
+                                return; // Couldn't find device in blkid
+                            }
+
+                            final Partition partition = partitions.get(0);
                             volume.addPartition(logicalId, partition);
-                            mListener.onPartitionAdded(volume, partition);
+                            mHandler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mListener.onPartitionAdded(volume, partition);
+                                }
+                            });
                         }
 
                         @Override
@@ -133,23 +150,38 @@ public class BlockDeviceObserver extends FileObserver {
                     Log.e(Constants.TAG, "No volume found for partition " + relativePath);
                 }
             } else {
-                Volume volume = new Volume(volumeName);
+                final Volume volume = new Volume(volumeName);
                 mVolumes.put(volumeName, volume);
-                mListener.onVolumeAdded(volume);
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mListener.onVolumeAdded(volume);
+                    }
+                });
             }
         } else if (event == FileObserver.DELETE) {
             if (logical) {
                 int logicalId = Integer.valueOf(matcher.group(2));
-                Volume volume = mVolumes.get(volumeName);
+                final Volume volume = mVolumes.get(volumeName);
                 if (volume != null) {
-                    Partition partition = volume.getPartition(logicalId);
+                    final Partition partition = volume.getPartition(logicalId);
                     volume.removePartition(logicalId);
-                    mListener.onPartitionRemoved(volume, partition);
+                    mHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            mListener.onPartitionRemoved(volume, partition);
+                        }
+                    });
                 }
             } else {
-                Volume volume = mVolumes.get(volumeName);
+                final Volume volume = mVolumes.get(volumeName);
                 mVolumes.remove(volumeName);
-                mListener.onVolumeRemoved(volume);
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mListener.onVolumeRemoved(volume);
+                    }
+                });
             }
         } else {
             throw new UnsupportedOperationException();
