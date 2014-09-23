@@ -79,6 +79,10 @@ public class MountieNotification {
             }
             builder.setStyle(style);
 
+            PendingIntent contentIntent = PendingIntent.getActivity(mService, 0,
+                    new Intent(mService, MountieActivity.class), PendingIntent.FLAG_CANCEL_CURRENT);
+            builder.setContentIntent(contentIntent);
+
             PendingIntent buttonIntent = PendingIntent.getBroadcast(mService, 0,
                     new Intent(ACTION_UNMOUNT), PendingIntent.FLAG_CANCEL_CURRENT);
             builder.addAction(R.drawable.ic_action_unmount,
