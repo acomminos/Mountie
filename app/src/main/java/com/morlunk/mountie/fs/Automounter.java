@@ -20,8 +20,6 @@ package com.morlunk.mountie.fs;
 
 import android.os.Environment;
 
-import com.stericson.RootTools.RootTools;
-import com.stericson.RootTools.exceptions.RootDeniedException;
 import com.stericson.RootTools.execution.Command;
 import com.stericson.RootTools.execution.CommandCapture;
 import com.stericson.RootTools.execution.Shell;
@@ -30,33 +28,38 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
-import java.util.concurrent.TimeoutException;
 
 /**
  * Automatically mounts discovered partitions in /sdcard/mountie.
  * Created by andrew on 17/09/14.
  */
 public class Automounter implements PartitionListener, UnmountListener, MountListener {
-    private Shell mRootShell;
-    // Directory relative to the root of the FUSE storage.
-    private File mDirectory;
     /**
-     * The actual mountie directory in /data/media/0.
+     * Android 4.2+'s mount directory for the primary user's external storage.
      * It's necessary to mount here to avoid the FUSE abstraction.
-     * TODO: Mount in /mnt/mountie and make symlink?
      */
-    private String mActualDirectory;
+    private static final String DATA_DIR = "/data/media/0/";
+
+    private Shell mRootShell;
+    private File mEmulatedDirectory;
+    private File mMountDirectory;
     private MountListener mMountListener;
     private UnmountListener mUnmountListener;
     private Set<Mount> mMounts;
 
-    public Automounter(Shell rootShell, File directory, MountListener mountListener, UnmountListener unmountListener) {
+    /**
+     * Creates a new automounter.
+     * Must be registered to mount
+     * @param rootShell
+     * @param dirName The name of the directory to mount in on external storage.
+     * @param mountListener
+     * @param unmountListener
+     */
+    public Automounter(Shell rootShell, String dirName, MountListener mountListener, UnmountListener unmountListener) {
         mRootShell = rootShell;
-        mDirectory = directory;
-        mActualDirectory = "/data/media/0/" + directory.getName();
+        mEmulatedDirectory = new File(Environment.getExternalStorageDirectory(), dirName);
+        mMountDirectory = new File(DATA_DIR, dirName);
         mMountListener = mountListener;
         mUnmountListener = unmountListener;
         mMounts = new HashSet<Mount>();
@@ -64,8 +67,8 @@ public class Automounter implements PartitionListener, UnmountListener, MountLis
     }
 
     public void cleanDirectory() {
-        for (final File file : mDirectory.listFiles()) {
-            Command mountCommand = new CommandCapture(0, "umount " + mActualDirectory + "/" + file.getName()) {
+        for (final File file : mEmulatedDirectory.listFiles()) {
+            Command mountCommand = new CommandCapture(0, "umount " + mMountDirectory.getAbsolutePath() + "/" + file.getName()) {
                 @Override
                 public void commandCompleted(int id, int exitcode) {
                     super.commandCompleted(id, exitcode);
@@ -124,7 +127,7 @@ public class Automounter implements PartitionListener, UnmountListener, MountLis
     }
 
     private File getDeviceMountDir(Partition partition) throws IOException {
-        File mountDir = new File(mDirectory, partition.getUUID());
+        File mountDir = new File(mEmulatedDirectory, partition.getUUID());
         if (!mountDir.exists() && !mountDir.mkdirs()) {
             throw new IOException("Couldn't create mount dir!");
         }
@@ -132,7 +135,7 @@ public class Automounter implements PartitionListener, UnmountListener, MountLis
     }
 
     private String getActualDeviceMountDir(Partition partition) throws IOException {
-        return mActualDirectory + "/" + getDeviceMountDir(partition).getName();
+        return mMountDirectory + "/" + getDeviceMountDir(partition).getName();
     }
 
     @Override

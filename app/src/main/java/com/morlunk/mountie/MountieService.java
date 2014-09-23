@@ -24,6 +24,7 @@ import android.content.SharedPreferences;
 import android.os.Binder;
 import android.os.Environment;
 import android.os.IBinder;
+import android.os.UserManager;
 import android.preference.PreferenceManager;
 import android.widget.Toast;
 
@@ -76,7 +77,7 @@ public class MountieService extends Service implements MountieNotification.Liste
                 return;
             }
 
-            mAutomounter = new Automounter(mRootShell, mountDir, this, this);
+            mAutomounter = new Automounter(mRootShell, MOUNT_DIR, this, this);
         }
 
         mBlockDeviceObserver = new BlockDeviceObserver(mRootShell, mAutomounter);
