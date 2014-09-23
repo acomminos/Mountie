@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="1024"
+   height="500"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.48.5 r10040"
+   sodipodi:docname="mountie_feature.svg"
+   inkscape:export-filename="/home/andrew/Development/Projects/Mountie/img/mountie_feature.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90">
+  <defs
+     id="defs4" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.7"
+     inkscape:cx="283.00513"
+     inkscape:cy="213.77277"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="2560"
+     inkscape:window-height="1378"
+     inkscape:window-x="1920"
+     inkscape:window-y="27"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-552.36218)">
+    <rect
+       style="fill:#e6e6e6;fill-opacity:1;stroke:none"
+       id="rect3068"
+       width="110"
+       height="64.285713"
+       x="76"
+       y="964.86218" />
+    <rect
+       style="fill:#f2f2f2;fill-opacity:1;stroke:none"
+       id="rect3058"
+       width="190"
+       height="421.42856"
+       x="36.841686"
+       y="575.57648"
+       rx="30" />
+    <g
+       id="g3053"
+       transform="matrix(0.82682842,0,0,0.82682842,46.257174,608.01597)">
+      <path
+         sodipodi:nodetypes="cccccccsssccccccccscccccccccccccccccc"
+         inkscape:connector-curvature="0"
+         id="path1334"
+         d="m 103.06335,401.22554 20.7828,-35.98804 -14.82544,0 0,-183.94485 37.84005,35.81614 c 2.44322,3.04808 4.15714,7.03622 4.25207,11.13869 0,16.59619 0.004,26.45179 0.0115,30.07958 -7.00601,2.45904 -12.06289,9.06444 -12.06289,16.91697 0,9.93399 8.0611,17.99581 17.99868,17.99581 9.9419,0 18.00014,-8.06109 18.00014,-17.99581 0,-7.85253 -5.05402,-14.45793 -12.05428,-16.91697 l 0.005,-29.72714 c 0,-8.05681 -4.42038,-16.49911 -9.60243,-21.87247 0.15394,0.14672 0.31791,0.2992 -0.003,-0.008 -0.12802,-0.11363 -40.14302,-37.99972 -40.14302,-37.99972 -2.43964,-3.04162 -4.14277,-7.02758 -4.24058,-11.12717 l 0.81725,-20.80873 -12.70465,0.003 0,20.44407 c 0,0.0525 -0.003,0.105 0,0.15822 l 0,45.21862 c -0.1043,4.0917 -1.80959,8.07262 -4.25209,11.11135 0,0 -40.012104,37.87748 -40.141571,37.99471 -0.321498,0.30352 -0.15392,0.15247 -0.0018,0.003 -5.181313,5.37335 -9.598816,13.81925 -9.598816,21.8775 l 0.0066,28.64832 -12.066492,0 0,35.99735 35.993793,0 0,-35.99735 -12.050682,0 c 0,0 0.01365,-7.54544 0.01365,-28.99931 0.09427,-4.10319 1.805978,-8.09563 4.249202,-11.14229 l 37.847236,-35.82405 0,138.96142 -14.849187,0 z" />
+      <text
+         sodipodi:linespacing="125%"
+         id="text3037"
+         y="151.34886"
+         x="24.082569"
+         style="font-size:47.41347504px;font-style:normal;font-variant:normal;font-weight:300;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Roboto;-inkscape-font-specification:Roboto Light"
+         xml:space="preserve"><tspan
+           style="font-size:170.68850708px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Roboto Slab;-inkscape-font-specification:Roboto Slab"
+           y="151.34886"
+           x="24.082569"
+           id="tspan3039"
+           sodipodi:role="line">M</tspan></text>
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-variant:normal;font-weight:300;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Roboto;-inkscape-font-specification:Roboto Light"
+       x="332.47321"
+       y="821.37054"
+       id="text3060"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3062"
+         x="332.47321"
+         y="821.37054"
+         style="font-size:144px">mountie</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-variant:normal;font-weight:300;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Roboto;-inkscape-font-specification:Roboto Light"
+       x="374.28571"
+       y="882.79907"
+       id="text3064"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3066"
+         x="374.28571"
+         y="882.79907"
+         style="font-size:48px">storage made simple</tspan></text>
+  </g>
+</svg>
