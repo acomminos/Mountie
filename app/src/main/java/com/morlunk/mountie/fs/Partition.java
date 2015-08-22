@@ -36,7 +36,7 @@ import java.util.regex.Pattern;
  * Created by andrew on 14/09/14.
  */
 public class Partition extends BlockDevice {
-    private static final Pattern HAS_LOGICAL_ID_PATTERN = Pattern.compile("(sd[a-z]+)(\\d+)");
+    private static final Pattern LOGICAL_ID_PATTERN = Pattern.compile("sd[a-z]+(\\d+)");
     private Set<Mount> mMounts;
     private String mLabel;
     private String mUUID;
@@ -127,9 +127,9 @@ public class Partition extends BlockDevice {
     }
 
     public int getLogicalId() {
-        Matcher matcher = HAS_LOGICAL_ID_PATTERN.matcher(getName());
+        Matcher matcher = LOGICAL_ID_PATTERN.matcher(getName());
         if (matcher.matches()) {
-            return Integer.parseInt(getName().replaceAll("sd[a-z]+([0-9]+)", "$1"));
+            return Integer.parseInt(matcher.group(1));
         } else {
             return 0;
         }
