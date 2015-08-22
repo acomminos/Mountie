@@ -26,18 +26,21 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 
 public class MountieActivity extends Activity {
+    private MountieService mountieService;
+
     private ServiceConnection mConn = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-
+            mountieService = ((MountieService.LocalBinder)service).getService();
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-
+            mountieService = null;
         }
     };
 
@@ -78,5 +81,16 @@ public class MountieActivity extends Activity {
 //            return true;
 //        }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void onClickDetectDevices(View v) {
+        if (mountieService != null)
+        {
+            mountieService.detectDevices();
+        }
+        else
+        {
+            // TODO
+        }
     }
 }

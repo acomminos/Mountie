@@ -38,5 +38,6 @@
     <string name="notify_label">Label: %s</string>
     <string name="notify_uuid">UUID: %s</string>
     <string name="notify_dev">Device: %s</string>
+    <string name="detect_devices">Detect Devices</string>
 
 </resources>

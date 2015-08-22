@@ -171,4 +171,8 @@ public class MountieService extends Service implements MountieNotification.Liste
             return mService;
         }
     }
+
+    public void detectDevices() {
+        mBlockDeviceObserver.detectDevices();
+    }
 }
