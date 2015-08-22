@@ -30,17 +30,17 @@ import android.view.View;
 
 
 public class MountieActivity extends Activity {
-    private MountieService mountieService;
+    private MountieService mMountieService;
 
     private ServiceConnection mConn = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            mountieService = ((MountieService.LocalBinder)service).getService();
+            mMountieService = ((MountieService.LocalBinder)service).getService();
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-            mountieService = null;
+            mMountieService = null;
         }
     };
 
@@ -84,9 +84,9 @@ public class MountieActivity extends Activity {
     }
 
     public void onClickDetectDevices(View v) {
-        if (mountieService != null)
+        if (mMountieService != null)
         {
-            mountieService.detectDevices();
+            mMountieService.detectDevices();
         }
         else
         {
