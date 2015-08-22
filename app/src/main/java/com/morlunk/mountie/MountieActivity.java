@@ -84,8 +84,7 @@ public class MountieActivity extends Activity {
     }
 
     public void onClickDetectDevices(View v) {
-        if (mMountieService != null)
-        {
+        if (mMountieService != null) {
             mMountieService.detectDevices();
         }
     }
