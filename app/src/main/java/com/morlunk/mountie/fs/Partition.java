@@ -54,7 +54,13 @@ public class Partition extends BlockDevice {
      */
     public void mount(Shell shell, final String target, final MountListener listener) throws IOException {
         Log.i(Constants.TAG, "Attempting to mount " + getPath() + " at " + target + " as " + mFilesystem);
-        Command mountCommand = new CommandCapture(0, "mount -o rw,nosuid,nodev,fmask=0000,dmask=0000,utf8 -t " + mFilesystem + " " + getPath() + " " + target) {
+
+        StringBuilder mountOptionsSB = new StringBuilder("rw,nosuid,nodev");
+        if (mFilesystem.equals("vfat") || mFilesystem.equals("ntfs"))
+            mountOptionsSB.append(",fmask=0000,dmask=0000,utf8");
+
+        String cmdline = "mount -o " + mountOptionsSB.toString() + " -t " + mFilesystem + " " + getPath() + " " + target;
+        Command mountCommand = new CommandCapture(0, cmdline) {
             @Override
             public void commandCompleted(int id, int exitcode) {
                 super.commandCompleted(id, exitcode);
