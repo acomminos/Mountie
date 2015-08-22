@@ -88,9 +88,5 @@ public class MountieActivity extends Activity {
         {
             mMountieService.detectDevices();
         }
-        else
-        {
-            // TODO
-        }
     }
 }
