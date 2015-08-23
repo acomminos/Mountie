@@ -29,11 +29,14 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by andrew on 14/09/14.
  */
 public class Partition extends BlockDevice {
+    private static final Pattern LOGICAL_ID_PATTERN = Pattern.compile("sd[a-z]+(\\d+)");
     private Set<Mount> mMounts;
     private String mLabel;
     private String mUUID;
@@ -126,10 +129,15 @@ public class Partition extends BlockDevice {
     }
 
     public String getVolumeName() {
-        return getName().replaceAll("(sd[a-z]+)[0-9]+", "$1");
+        return getName().replaceAll("(sd[a-z]+)[0-9]*", "$1");
     }
 
     public int getLogicalId() {
-        return Integer.parseInt(getName().replaceAll("sd[a-z]+([0-9]+)", "$1"));
+        Matcher matcher = LOGICAL_ID_PATTERN.matcher(getName());
+        if (matcher.matches()) {
+            return Integer.parseInt(matcher.group(1));
+        } else {
+            return 0;
+        }
     }
 }
